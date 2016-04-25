@@ -14,7 +14,7 @@ public class Skynet {
                 long sum = 0L;
                 for (int i = 0; i < div; i++) {
                     final int subNum = num + i * (size / div);
-                    new Fiber<Void>(() -> skynet(rc, subNum, size / div, div)).start();
+                    new Fiber<Void>(/* null, 8, */ () -> skynet(rc, subNum, size / div, div)).start();
                 }
                 for (int i = 0; i < div; i++)
                     sum += rc.receiveLong();
@@ -28,17 +28,20 @@ public class Skynet {
 
     public static void main(String[] args) throws Exception {
         final LongChannel c = newLongChannel(1);
+        final boolean gc = args != null && args.length > 0 && "gc".equals(args[0].toLowerCase());
 
         long start; long result; long elapsed;
         for (int i = 0 ; i < 10 ; i++) {
-            System.out.println("Performing GC");
-            System.gc();
-            System.out.println(i + "...");
+            if (gc) {
+                System.out.println("GC");
+                System.gc();
+            }
+            System.out.print((i+1) + ": ");
             start = System.nanoTime();
-            new Fiber(() -> skynet(c, 0, 1000000, 10)).start();
+            new Fiber(/* null, 8, */ () -> skynet(c, 0, 1000000, 10)).start();
             result = c.receiveLong();
             elapsed = (System.nanoTime() - start) / 1_000_000;
-            System.out.println("Result: " + result + " in " + elapsed + " ms.");
+            System.out.println(result + " (" + elapsed + " ms)");
         }
     }
 }

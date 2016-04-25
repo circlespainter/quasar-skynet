@@ -7,3 +7,9 @@ See [here](https://github.com/atemerev/skynet).
 ```
 ./gradlew run
 ```
+
+Or, to perform GC before every execution:
+
+```
+./gradle run -PappArgs="['gc']"
+```

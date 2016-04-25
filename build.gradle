@@ -50,6 +50,12 @@ applicationDefaultJvmArgs = [
     "-javaagent:${configurations.quasar.singleFile}" // =v, =d, =c, =m
 ]
 
+run {
+  if (project.hasProperty("appArgs")) {
+    args Eval.me(appArgs)
+  }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.12'
 }
