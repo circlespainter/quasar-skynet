@@ -1,0 +1,57 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+group               = 'co.paralleluniverse'
+version             = '0.1.0-SNAPSHOT'
+status              = 'integration'
+description         = 'TODO - Pls. edit - Gradle bootstrap project for Quasar'
+
+ext.classifier      = ':jdk8' // ':'
+sourceCompatibility = 1.8     // 1.7
+targetCompatibility = 1.8     // 1.7
+
+ext.quasarVer       = '0.7.5-SNAPSHOT'
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+configurations {
+    quasar
+}
+
+configurations.all {
+    resolutionStrategy {
+        failOnVersionConflict()
+    }
+}
+
+repositories {
+//    mavenLocal()
+    mavenCentral()
+//    maven { url "https://oss.sonatype.org/content/repositories/releases" }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+//    maven { url 'https://maven.java.net/content/repositories/snapshots' }
+}
+
+dependencies {
+    compile "co.paralleluniverse:quasar-core:${quasarVer}${classifier}"
+
+    quasar "co.paralleluniverse:quasar-core:${quasarVer}${classifier}@jar"
+}
+
+mainClassName = "co.paralleluniverse.quasartkb.Skynet"
+
+applicationDefaultJvmArgs = [
+    // "-Dco.paralleluniverse.fibers.verifyInstrumentation",
+    "-server", "-XX:+AggressiveOpts",
+    "-Xms4G", "-Xmx4G",
+    // "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=10",
+    "-XX:ThreadStackSize=256",
+    "-Dco.paralleluniverse.fibers.detectRunawayFibers=false",
+    "-javaagent:${configurations.quasar.singleFile}" // =v, =d, =c, =m
+]
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.12'
+}
+
+defaultTasks 'test'
