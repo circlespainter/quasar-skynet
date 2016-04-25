@@ -5,12 +5,14 @@ import static co.paralleluniverse.strands.channels.Channels.*;
 import co.paralleluniverse.strands.channels.*;
 
 public class Skynet {
+    private static final int BUFFER = -1;
+
     private static void skynet(LongChannel c, int num, int size, int div) throws SuspendExecution, InterruptedException {
         try {
             if (size == 1)
                 c.send(num);
             else {
-                final LongChannel rc = newLongChannel(1);
+                final LongChannel rc = newLongChannel(BUFFER);
                 long sum = 0L;
                 for (int i = 0; i < div; i++) {
                     final int subNum = num + i * (size / div);
@@ -27,7 +29,7 @@ public class Skynet {
     }
 
     public static void main(String[] args) throws Exception {
-        final LongChannel c = newLongChannel(1);
+        final LongChannel c = newLongChannel(BUFFER);
         final boolean gc = args != null && args.length > 0 && "gc".equals(args[0].toLowerCase());
 
         long start; long result; long elapsed;
