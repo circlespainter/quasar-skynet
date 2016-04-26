@@ -41,7 +41,8 @@ dependencies {
 mainClassName = "co.paralleluniverse.quasartkb.Skynet"
 
 applicationDefaultJvmArgs = [
-    // "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=10",
+    // "-XX:+UseG1GC",
+    // "-XX:MaxGCPauseMillis=10",
     // "-server",
     // "-XX:+AggressiveOpts",
     "-Xms4G",
@@ -49,6 +50,7 @@ applicationDefaultJvmArgs = [
     // "-XX:ThreadStackSize=256",
     // "-Dco.paralleluniverse.fibers.verifyInstrumentation",
     // "-Dco.paralleluniverse.fibers.detectRunawayFibers=false",
+    // "-XX:+UnlockCommercialFeatures", "-XX:+FlightRecorder", "-XX:FlightRecorderOptions=defaultrecording=true,dumponexit=true",
     "-javaagent:${configurations.quasar.singleFile}" // =v, =d, =c, =m
 ]
 
