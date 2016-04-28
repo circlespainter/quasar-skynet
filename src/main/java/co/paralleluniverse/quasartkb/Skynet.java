@@ -6,8 +6,9 @@ import co.paralleluniverse.strands.channels.*;
 
 public class Skynet {
     // START customizable
-    private static final int PER_CHANNEL_BUFFER = 1; // >= 0 (fully sync), <= BRANCH_SPAWN (fully async)
+    private static final int RUNS = 10;
     private static final int BRANCH_SPAWN = 10;
+    private static final int PER_CHANNEL_BUFFER = 1; // >= 0 (fully sync), <= BRANCH_SPAWN (fully async)
     private static final int TOTAL_COUNT_OF_LEAF_FIBERS = 1_000_000; // >= BRANCH_SPAWN;
     private static final boolean DEBUG = false;
     // END customizable
@@ -49,7 +50,7 @@ public class Skynet {
         final boolean gc = args != null && args.length > 0 && "gc".equals(args[0].toLowerCase());
 
         long start; long result; long elapsed;
-        for (int i = 0 ; i < 10 ; i++) {
+        for (int i = 0 ; i < RUNS ; i++) {
             if (gc) {
                 System.err.println("GC");
                 System.gc();
