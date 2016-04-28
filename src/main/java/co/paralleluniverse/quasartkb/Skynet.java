@@ -19,26 +19,35 @@ public class Skynet {
         try {
             if (size == 1) {
                 if (DEBUG)
-                    System.err.println("Leaf fiber " + num + ", just sending num");
+                    System.err.println("Leaf fiber " + num + ", sending num");
                 c.send(num);
+                if (DEBUG)
+                    System.err.println("Leaf fiber " + num + ", sent num");
             } else {
                 final LongChannel rc = newLongChannel(PER_CHANNEL_BUFFER);
                 long sum = 0L;
                 for (int i = 0; i < div; i++) {
                     final int subNum = num + i * (size / div);
-                    if (DEBUG)
-                        System.err.println("Branch fiber " +  num + ", spawning sub " + subNum + " of " + div);
-                    new Fiber<Void>(/* null, 8, */ () -> skynet(rc, subNum, size / div, div)).start();
+                    if (DEBUG) {
+                        System.err.println("Branch fiber " + num + ", spawning sub " + subNum + " of " + div);
+                        new Fiber<Void>(Integer.toString(subNum), () -> skynet(rc, subNum, size / div, div)).start();
+                    } else {
+                        new Fiber<Void>(/* null, 8, */ () -> skynet(rc, subNum, size / div, div)).start();
+                    }
                 }
                 for (int i = 0; i < div; i++) {
                     if (DEBUG)
-                        System.err.println("Branch fiber " + num + ", receive #" + i + " of " + div);
+                        System.err.println("Branch fiber " + num + ", receiving #" + i + " of " + div);
                     sum += rc.receiveLong();
+                    if (DEBUG)
+                        System.err.println("Branch fiber " + num + ", received #" + i + " of " + div);
                 }
 
                 if (DEBUG)
                     System.err.println("Branch fiber " + num + ", sending sum " + sum);
                 c.send(sum);
+                if (DEBUG)
+                    System.err.println("Branch fiber " + num + ", sent sum " + sum);
             }
         } catch (final Throwable e) {
             throw new AssertionError(e);
@@ -57,9 +66,12 @@ public class Skynet {
             }
             System.err.print((i+1) + ": ");
             start = System.nanoTime();
-            if (DEBUG)
+            if (DEBUG) {
                 System.err.println("Spawning root fiber");
-            new Fiber(/* null, 8, */ () -> skynet(c, ROOT_FIBER_NUM, TOTAL_COUNT_OF_LEAF_FIBERS, BRANCH_SPAWN)).start();
+                new Fiber(Integer.toString(ROOT_FIBER_NUM), () -> skynet(c, ROOT_FIBER_NUM, TOTAL_COUNT_OF_LEAF_FIBERS, BRANCH_SPAWN)).start();
+            } else {
+                new Fiber(/* null, 8, */ () -> skynet(c, ROOT_FIBER_NUM, TOTAL_COUNT_OF_LEAF_FIBERS, BRANCH_SPAWN)).start();
+            }
             if (DEBUG)
                 System.err.println("Receiving from root fiber");
             result = c.receiveLong();
