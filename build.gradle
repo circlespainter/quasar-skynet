@@ -10,6 +10,7 @@ ext.classifier      = ':jdk8' // ':'
 sourceCompatibility = 1.8     // 1.7
 targetCompatibility = 1.8     // 1.7
 
+// ext.quasarVer       = '0.7.5.sched-SNAPSHOT'
 ext.quasarVer       = '0.7.5-SNAPSHOT'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -25,7 +26,7 @@ configurations.all {
 }
 
 repositories {
-//    mavenLocal()
+    mavenLocal()
     mavenCentral()
 //    maven { url "https://oss.sonatype.org/content/repositories/releases" }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
