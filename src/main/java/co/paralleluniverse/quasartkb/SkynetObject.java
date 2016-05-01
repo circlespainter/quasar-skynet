@@ -1,44 +1,48 @@
 package co.paralleluniverse.quasartkb;
 
 import co.paralleluniverse.fibers.*;
-import static co.paralleluniverse.strands.channels.Channels.*;
+import co.paralleluniverse.strands.SuspendableRunnable;
 import co.paralleluniverse.strands.channels.*;
 
-public class Skynet {
-    // START customizable
-    private static final int RUNS = 10;
-    private static final int BRANCH_SPAWN = 10;
-    private static final int PER_CHANNEL_BUFFER = 1; // >= 0 (fully sync), <= BRANCH_SPAWN (fully async)
-    private static final int TOTAL_COUNT_OF_LEAF_FIBERS = 1_000_000; // >= BRANCH_SPAWN;
-    private static final boolean DEBUG = false;
-    // END customizable
+import static co.paralleluniverse.strands.channels.Channels.newChannel;
 
-    private static final int ROOT_FIBER_NUM = 0;
+import static co.paralleluniverse.quasartkb.Util.*;
 
-    private static void skynet(LongChannel c, int num, int size, int div) throws SuspendExecution, InterruptedException {
+public class SkynetObject {
+    private static void skynet(Channel<Long> c, int num, final int size, final int div) throws SuspendExecution, InterruptedException {
         try {
             if (size == 1) {
                 if (DEBUG)
                     System.err.println("Leaf fiber " + num + ", sending num");
-                c.send(num);
+                c.send((long) num);
                 if (DEBUG)
                     System.err.println("Leaf fiber " + num + ", sent num");
             } else {
-                final LongChannel rc = newLongChannel(PER_CHANNEL_BUFFER);
+                final Channel<Long> rc = newChannel(PER_CHANNEL_BUFFER);
                 long sum = 0L;
                 for (int i = 0; i < div; i++) {
                     final int subNum = num + i * (size / div);
                     if (DEBUG) {
                         System.err.println("Branch fiber " + num + ", spawning sub " + subNum + " of " + div);
-                        new Fiber<Void>(Integer.toString(subNum), () -> skynet(rc, subNum, size / div, div)).start();
+                        new Fiber<Void>(Integer.toString(subNum), new SuspendableRunnable() {
+                            @Override
+                            public void run() throws SuspendExecution, InterruptedException {
+                                skynet(rc, subNum, size / div, div);
+                            }
+                        }).start();
                     } else {
-                        new Fiber<Void>(/* null, 8, */ () -> skynet(rc, subNum, size / div, div)).start();
+                        new Fiber<Void>(/* null, 8, */ new SuspendableRunnable() {
+                            @Override
+                            public void run() throws SuspendExecution, InterruptedException {
+                                skynet(rc, subNum, size / div, div);
+                            }
+                        }).start();
                     }
                 }
                 for (int i = 0; i < div; i++) {
                     if (DEBUG)
                         System.err.println("Branch fiber " + num + ", receiving #" + i + " of " + div);
-                    sum += rc.receiveLong();
+                    sum += rc.receive();
                     if (DEBUG)
                         System.err.println("Branch fiber " + num + ", received #" + i + " of " + div);
                 }
@@ -55,7 +59,7 @@ public class Skynet {
     }
 
     public static void main(String[] args) throws Exception {
-        final LongChannel c = newLongChannel(PER_CHANNEL_BUFFER);
+        final Channel<Long> c = newChannel(PER_CHANNEL_BUFFER);
         final boolean gc = args != null && args.length > 0 && "gc".equals(args[0].toLowerCase());
 
         long start; long result; long elapsed;
@@ -68,13 +72,23 @@ public class Skynet {
             start = System.nanoTime();
             if (DEBUG) {
                 System.err.println("Spawning root fiber");
-                new Fiber(Integer.toString(ROOT_FIBER_NUM), () -> skynet(c, ROOT_FIBER_NUM, TOTAL_COUNT_OF_LEAF_FIBERS, BRANCH_SPAWN)).start();
+                new Fiber(Integer.toString(ROOT_FIBER_NUM), new SuspendableRunnable() {
+                    @Override
+                    public void run() throws SuspendExecution, InterruptedException {
+                        skynet(c, ROOT_FIBER_NUM, TOTAL_COUNT_OF_LEAF_FIBERS, BRANCH_SPAWN);
+                    }
+                }).start();
             } else {
-                new Fiber(/* null, 8, */ () -> skynet(c, ROOT_FIBER_NUM, TOTAL_COUNT_OF_LEAF_FIBERS, BRANCH_SPAWN)).start();
+                new Fiber(/* null, 8, */ new SuspendableRunnable() {
+                    @Override
+                    public void run() throws SuspendExecution, InterruptedException {
+                        skynet(c, ROOT_FIBER_NUM, TOTAL_COUNT_OF_LEAF_FIBERS, BRANCH_SPAWN);
+                    }
+                }).start();
             }
             if (DEBUG)
                 System.err.println("Receiving from root fiber");
-            result = c.receiveLong();
+            result = c.receive();
             if (DEBUG)
                 System.err.println("Received " + result + " from root fiber");
             elapsed = (System.nanoTime() - start) / 1_000_000;
@@ -82,17 +96,5 @@ public class Skynet {
         }
 
         printSchedulingStats();
-    }
-
-    private static void printSchedulingStats() {
-//        System.err.println("parkLoops: " + ParkableForkJoinTask.parkLoops.longValue());
-//        System.err.println("parkLeased: " + ParkableForkJoinTask.parkLeased.longValue());
-//        System.err.println("parkRunnable: " + ParkableForkJoinTask.parkRunnable.longValue());
-//        System.err.println("unparkLoops: " + ParkableForkJoinTask.unparkLoops.longValue());
-//        System.err.println("unparkParked: " + ParkableForkJoinTask.unparkParked.longValue());
-//        System.err.println("unparkRunnable: " + ParkableForkJoinTask.unparkRunnable.longValue());
-//        System.err.println("unparkParking: " + ParkableForkJoinTask.unparkParking.longValue());
-//        System.err.println("unparkLeasedDoNothing: " + ParkableForkJoinTask.unparkLeasedDoNothing.longValue());
-//        System.err.println("unparkParkedExclusiveByOtherDoNothing: " + ParkableForkJoinTask.unparkParkedExclusiveByOtherDoNothing.longValue());
     }
 }
