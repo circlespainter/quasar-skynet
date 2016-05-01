@@ -6,12 +6,14 @@ version             = '0.1.0-SNAPSHOT'
 status              = 'integration'
 description         = 'TODO - Pls. edit - Gradle bootstrap project for Quasar'
 
-ext.classifier      = ':'// ':jdk8'
-sourceCompatibility = 1.7     // 1.7
-targetCompatibility = 1.7     // 1.7
+ext.classifier      = ':jdk8' // ':'
+sourceCompatibility = 1.8     // 1.7
+targetCompatibility = 1.8     // 1.7
 
 // ext.quasarVer       = '0.7.5.sched-SNAPSHOT'
+// ext.quasarVer        = '0.7.5.chfix-SNAPSHOT'
 ext.quasarVer       = '0.7.5-SNAPSHOT'
+// ext.quasarVer       = '0.7.4'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
