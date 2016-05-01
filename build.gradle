@@ -10,8 +10,6 @@ ext.classifier      = ':jdk8' // ':'
 sourceCompatibility = 1.8     // 1.7
 targetCompatibility = 1.8     // 1.7
 
-// ext.quasarVer       = '0.7.5.sched-SNAPSHOT'
-// ext.quasarVer        = '0.7.5.chfix-SNAPSHOT'
 ext.quasarVer       = '0.7.5-SNAPSHOT'
 // ext.quasarVer       = '0.7.4'
 
@@ -42,24 +40,21 @@ dependencies {
 }
 
 mainClassName = "co.paralleluniverse.quasartkb.SkynetNative"
-// mainClassName = "co.paralleluniverse.quasartkb.SkynetObject"
 
 applicationDefaultJvmArgs = [
-    // "-XX:+UseG1GC",
-    // "-XX:MaxGCPauseMillis=10",
-    // "-server",
-    // "-XX:+AggressiveOpts",
     "-Xms4G",
     "-Xmx4G",
-    // "-XX:ThreadStackSize=256",
+
     // "-Dco.paralleluniverse.fibers.verifyInstrumentation",
-    "-Dco.paralleluniverse.fibers.detectRunawayFibers=false",
+    // "-Dco.paralleluniverse.fibers.detectRunawayFibers=false",
+
     // "-Dco.paralleluniverse.debugMode=true",
-    "-Dco.paralleluniverse.monitoring.flightRecorderLevel=5",
-    "-Dco.paralleluniverse.globalFlightRecorder=true",
-    "-Dco.paralleluniverse.flightRecorderDumpFile=quasar.log",
-    "-Dco.paralleluniverse.monitoring.flightRecorderSize=200000",
+    // "-Dco.paralleluniverse.monitoring.flightRecorderLevel=5",
+    // "-Dco.paralleluniverse.globalFlightRecorder=true",
+    // "-Dco.paralleluniverse.flightRecorderDumpFile=quasar.log",
+    // "-Dco.paralleluniverse.monitoring.flightRecorderSize=200000",
     // "-XX:+UnlockCommercialFeatures", "-XX:+FlightRecorder", "-XX:FlightRecorderOptions=defaultrecording=true,dumponexit=true",
+
     "-javaagent:${configurations.quasar.singleFile}" // =v, =d, =c, =m
 ]
 
