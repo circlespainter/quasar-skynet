@@ -1,10 +1,9 @@
 import co.paralleluniverse.fibers.*;
 import co.paralleluniverse.strands.channels.Channel;
-
-import static co.paralleluniverse.strands.channels.Channels.newChannel;
+import static co.paralleluniverse.strands.channels.Channels.*;
 
 public class Skynet {
-    static void skynet(Channel<Long> c, int num, final int size, final int div) throws SuspendExecution, InterruptedException {
+    static void skynet(Channel<Long> c, int num, int size, int div) throws SuspendExecution, InterruptedException {
         if (size == 1) {
             c.send((long) num);
             return;
@@ -22,15 +21,13 @@ public class Skynet {
     }
 
     public static void main(String[] args) throws Exception {
-        Channel<Long> c = newChannel(BUFFER);
-
-        long start; long result; long elapsed;
         for (int i = 0 ; i < RUNS ; i++) {
+            Channel<Long> c = newChannel(BUFFER);
             System.out.print((i+1) + ": ");
-            start = System.nanoTime();
+            long start = System.nanoTime();
             new Fiber(() -> skynet(c, 0, TOTAL, BRANCH)).start();
-            result = c.receive();
-            elapsed = (System.nanoTime() - start) / 1_000_000;
+            long result = c.receive();
+            long elapsed = (System.nanoTime() - start) / 1_000_000;
             System.out.println(result + " (" + elapsed + " ms)");
         }
     }
