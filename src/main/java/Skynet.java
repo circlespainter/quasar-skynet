@@ -7,17 +7,18 @@ public class Skynet {
     static void skynet(Channel<Long> c, int num, final int size, final int div) throws SuspendExecution, InterruptedException {
         if (size == 1) {
             c.send((long) num);
-        } else {
-            Channel<Long> rc = newChannel(BUFFER);
-            long sum = 0L;
-            for (int i = 0; i < div; i++) {
-                int subNum = num + i * (size / div);
-                new Fiber(() -> skynet(rc, subNum, size / div, div)).start();
-            }
-            for (int i = 0; i < div; i++)
-                sum += rc.receive();
-            c.send(sum);
+            return;
         }
+
+        Channel<Long> rc = newChannel(BUFFER);
+        long sum = 0L;
+        for (int i = 0; i < div; i++) {
+            int subNum = num + i * (size / div);
+            new Fiber(() -> skynet(rc, subNum, size / div, div)).start();
+        }
+        for (int i = 0; i < div; i++)
+            sum += rc.receive();
+        c.send(sum);
     }
 
     public static void main(String[] args) throws Exception {
