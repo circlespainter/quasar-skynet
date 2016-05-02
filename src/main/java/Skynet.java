@@ -3,16 +3,16 @@ import co.paralleluniverse.strands.channels.Channel;
 import static co.paralleluniverse.strands.channels.Channels.*;
 
 public class Skynet {
-    static void skynet(Channel<Long> c, int num, int size, int div) throws SuspendExecution, InterruptedException {
+    static void skynet(Channel<Long> c, long num, int size, int div) throws SuspendExecution, InterruptedException {
         if (size == 1) {
-            c.send((long) num);
+            c.send(num);
             return;
         }
 
         Channel<Long> rc = newChannel(BUFFER);
         long sum = 0L;
         for (int i = 0; i < div; i++) {
-            int subNum = num + i * (size / div);
+            long subNum = num + i * (size / div);
             new Fiber(() -> skynet(rc, subNum, size / div, div)).start();
         }
         for (int i = 0; i < div; i++)
