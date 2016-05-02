@@ -11,7 +11,7 @@ final class Util {
     // Regular skynet conf
     static final int RUNS = 10; // 100_000 // 1
     static final int BRANCH_SPAWN = 10;
-    static final int PER_CHANNEL_BUFFER = 10; // >= 0 (fully sync), <= BRANCH_SPAWN (fully async), -1 = +inf
+    static final int PER_CHANNEL_BUFFER = -1; // >= 0 (fully sync), <= BRANCH_SPAWN (fully async) ; < 0 means +inf
     static final int TOTAL_COUNT_OF_LEAF_FIBERS = 1_000_000; // 1_000_000 // >= BRANCH_SPAWN
 
     // END customizable

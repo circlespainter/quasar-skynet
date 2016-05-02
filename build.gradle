@@ -46,7 +46,7 @@ applicationDefaultJvmArgs = [
     "-Xmx4G",
 
     // "-Dco.paralleluniverse.fibers.verifyInstrumentation",
-    // "-Dco.paralleluniverse.fibers.detectRunawayFibers=false",
+    "-Dco.paralleluniverse.fibers.detectRunawayFibers=false",
 
     // "-Dco.paralleluniverse.debugMode=true",
     // "-Dco.paralleluniverse.monitoring.flightRecorderLevel=5",
