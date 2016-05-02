@@ -22,13 +22,14 @@ public class Skynet {
 
     public static void main(String[] args) throws Exception {
         for (int i = 0 ; i < RUNS ; i++) {
-            Channel<Long> c = newChannel(BUFFER);
-            System.out.print((i+1) + ": ");
             long start = System.nanoTime();
+
+            Channel<Long> c = newChannel(BUFFER);
             new Fiber(() -> skynet(c, 0, TOTAL, BRANCH)).start();
             long result = c.receive();
+
             long elapsed = (System.nanoTime() - start) / 1_000_000;
-            System.out.println(result + " (" + elapsed + " ms)");
+            System.out.println((i+1) + ": " + result + " (" + elapsed + " ms)");
         }
     }
 
