@@ -7,5 +7,5 @@ See [here](https://github.com/atemerev/skynet).
 Optionally adjust the JVM settings at the end of `build.gradle` and the buffer size constant at the end of `Skynet.java`. Then:
 
 ```
-./gradlew run
+./gradlew
 ```

@@ -2,15 +2,10 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 group               = 'co.paralleluniverse'
-version             = '0.1.0-SNAPSHOT'
-status              = 'integration'
-description         = 'TODO - Pls. edit - Gradle bootstrap project for Quasar'
+version             = '0.1.0'
 
-ext.classifier      = ':jdk8' // ':'
-sourceCompatibility = 1.8     // 1.7
-targetCompatibility = 1.8     // 1.7
-
-ext.quasarVer       = '0.7.5'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -25,47 +20,26 @@ configurations.all {
 }
 
 repositories {
-//    mavenLocal()
     mavenCentral()
-//    maven { url "https://oss.sonatype.org/content/repositories/releases" }
-//    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-//    maven { url 'https://maven.java.net/content/repositories/snapshots' }
 }
 
 dependencies {
-    compile "co.paralleluniverse:quasar-core:${quasarVer}${classifier}"
-
-    quasar "co.paralleluniverse:quasar-core:${quasarVer}${classifier}@jar"
+    compile "co.paralleluniverse:quasar-core:0.7.5:jdk8"
+    quasar "co.paralleluniverse:quasar-core:0.7.5:jdk8@jar"
 }
 
-mainClassName = "co.paralleluniverse.quasartkb.SkynetNative"
-// mainClassName = "co.paralleluniverse.quasartkb.SkynetObject"
-
+mainClassName = "Skynet"
 applicationDefaultJvmArgs = [
     "-Xms4G",
     "-Xmx4G",
 
-    // "-Dco.paralleluniverse.fibers.verifyInstrumentation",
     "-Dco.paralleluniverse.fibers.detectRunawayFibers=false",
 
-    // "-Dco.paralleluniverse.debugMode=true",
-    // "-Dco.paralleluniverse.monitoring.flightRecorderLevel=5",
-    // "-Dco.paralleluniverse.globalFlightRecorder=true",
-    // "-Dco.paralleluniverse.flightRecorderDumpFile=quasar.log",
-    // "-Dco.paralleluniverse.monitoring.flightRecorderSize=200000",
-    // "-XX:+UnlockCommercialFeatures", "-XX:+FlightRecorder", "-XX:FlightRecorderOptions=defaultrecording=true,dumponexit=true",
-
-    "-javaagent:${configurations.quasar.singleFile}" // =v, =d, =c, =m
+    "-javaagent:${configurations.quasar.singleFile}"
 ]
-
-run {
-  if (project.hasProperty("appArgs")) {
-    args Eval.me(appArgs)
-  }
-}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.12'
 }
 
-defaultTasks 'test'
+defaultTasks 'run'
