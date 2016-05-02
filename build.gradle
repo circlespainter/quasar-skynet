@@ -10,8 +10,7 @@ ext.classifier      = ':jdk8' // ':'
 sourceCompatibility = 1.8     // 1.7
 targetCompatibility = 1.8     // 1.7
 
-ext.quasarVer       = '0.7.5-SNAPSHOT'
-// ext.quasarVer       = '0.7.4'
+ext.quasarVer       = '0.7.5'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -26,10 +25,10 @@ configurations.all {
 }
 
 repositories {
-    mavenLocal()
+//    mavenLocal()
     mavenCentral()
 //    maven { url "https://oss.sonatype.org/content/repositories/releases" }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+//    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 //    maven { url 'https://maven.java.net/content/repositories/snapshots' }
 }
 
@@ -40,6 +39,7 @@ dependencies {
 }
 
 mainClassName = "co.paralleluniverse.quasartkb.SkynetNative"
+// mainClassName = "co.paralleluniverse.quasartkb.SkynetObject"
 
 applicationDefaultJvmArgs = [
     "-Xms4G",
