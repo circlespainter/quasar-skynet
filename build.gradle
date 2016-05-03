@@ -29,6 +29,7 @@ dependencies {
 }
 
 mainClassName = "Skynet"
+// mainClassName = "SkynetChannels"
 applicationDefaultJvmArgs = [
     "-Xms4G",
     "-Xmx4G",
